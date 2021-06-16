@@ -1,0 +1,12 @@
+type UserReserveQuery { 
+ userReserves(where: { user: String!}) {
+    id
+    reserve{
+      id
+      symbol
+    }
+    user {
+      id
+    }
+  }
+}
