@@ -1,5 +1,6 @@
 import { Telegraf, Markup } from 'telegraf'
 import pkg from 'dotenv'
+import { getUserDeposit } from './aave-functions/index.js'
 const { config } = pkg
 
 config()
@@ -12,7 +13,11 @@ bot.command('quit', (ctx) => {
   ctx.leaveChat()
 })
 bot.command('name', (ctx) => {
-  ctx.reply("hi i am aave monitoring");
+  ctx.reply('hi i am aave monitoring')
+})
+
+bot.command('deposits', (ctx) => {
+  getUserDeposit().then((result) => ctx.reply(result))
 })
 
 // bot.command('oldschool', (ctx) => ctx.reply('Hello'))
