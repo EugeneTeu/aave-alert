@@ -88,7 +88,7 @@ export const getVariableRate = () =>
     variableRatesResolver
   )
 // getUserDeposit()
-getVariableRate()
+// getVariableRate()
 
 // executeQuery(aaveV2Client, testQuery)
 // -----------------------------------------------------------------------------
