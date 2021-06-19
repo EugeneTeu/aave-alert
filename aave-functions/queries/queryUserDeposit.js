@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server'
 import { formatJson, formatUSDC, formatERC20 } from '../utils/index.js'
-
+// userDeposit gql query
 const userDepositQuery = (USER_ADDRESS) => gql`
   {
     deposits(where: { user: "${USER_ADDRESS}" }) {
@@ -9,6 +9,7 @@ const userDepositQuery = (USER_ADDRESS) => gql`
       }
       reserve {
         symbol
+        variableBorrowRate
       }
     }
   }
@@ -25,17 +26,14 @@ const userDespositResolver = (data) => {
     .map((data) => {
       const {
         userReserve: { currentATokenBalance },
-        reserve: { symbol },
+        reserve: { symbol, variableBorrowRate },
       } = data
       let formattedBalance = '0'
-
       if (symbol === 'USDC') {
         formattedBalance = formatUSDC(currentATokenBalance)
       } else {
         formattedBalance = formatERC20(currentATokenBalance)
       }
-      const obj = {}
-      obj[symbol] = formattedBalance
       balances.set(symbol, formattedBalance)
     })
 
@@ -43,6 +41,8 @@ const userDespositResolver = (data) => {
 }
 
 // takes in a map of { symbol: amount }
+//TODO: move to bot function folder
+// bot function folder will compose graphql calls together
 const formatDataForBot = (balance) => {
   let result = ['You currently have the following deposits in AAVE:\n']
   for (let [key, value] of balance) {

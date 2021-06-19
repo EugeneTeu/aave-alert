@@ -2,7 +2,7 @@
   "name": "aave-alert",
   "version": "1.0.0",
   "description": "Alert bot for aave",
-  "main": "index.ts",
+  "main": "index.js",
   "license": "MIT",
   "dependencies": {
     "@aave/protocol-js": "^2.7.2",
