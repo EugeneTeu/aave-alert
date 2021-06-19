@@ -2,6 +2,7 @@ import { gql } from 'apollo-server'
 import { formatJson, formatUSDC, formatERC20 } from '../utils/index.js'
 import { calculateAverageRate } from '@aave/protocol-js'
 //TODO: just follow sdk...
+
 // query rates by symbols
 const variableRatesQuery = (symbol) => gql`
   {
@@ -74,3 +75,25 @@ export { variableRatesQuery, variableRatesResolver }
 //   result.paramsHistory[0].timestamp,
 //   result.lastUpdateTimestamp
 // );
+
+// apy/ apr
+
+const reservesQuery = () => gql`
+  {
+    reserves {
+      name
+      underlyingAsset
+
+      liquidityRate
+      stableBorrowRate
+      variableBorrowRate
+
+      aEmissionPerSecond
+      vEmissionPerSecond
+      sEmissionPerSecond
+
+      totalATokenSupply
+      totalCurrentVariableDebt
+    }
+  }
+`
