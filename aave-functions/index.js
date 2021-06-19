@@ -1,17 +1,6 @@
-import { createRequire } from 'module'
-import {
-  ApolloServer,
-  gql,
-  makeExecutableSchema,
-  addSchemaLevelResolveFunction,
-  makeRemoteExecutableSchema,
-  introspectSchema,
-} from 'apollo-server'
 import { HttpLink } from 'apollo-link-http'
 import fetch from 'node-fetch'
-import { loadSchema } from '@graphql-tools/load'
-import { UrlLoader } from '@graphql-tools/url-loader'
-import { addResolversToSchema } from '@graphql-tools/schema'
+import { gql } from 'apollo-server'
 import express, { json } from 'express'
 import { graphqlHTTP } from 'express-graphql'
 import { request, GraphQLClient } from 'graphql-request'
@@ -21,6 +10,8 @@ import {
   aaveV2SubgraphEndpoint,
 } from './constants.js'
 
+import { userDepositQuery, userDespositResolver } from './queries/index.js'
+import { formatJson } from './utils/index.js'
 // create a GraphQL client instance to send requests
 const aaveMaticClient = new GraphQLClient(aaveMaticSubgraphEndpoint, {
   headers: {},
@@ -29,16 +20,14 @@ const aaveV2Client = new GraphQLClient(aaveV2SubgraphEndpoint, {
   headers: {},
 })
 
-const formatJson = (jsonString) => JSON.stringify(jsonString, null, 2)
-
-const executeQuery = async (client, query) => {
+// takes in a client, a http query, a resolver to resolve graphql data from endpoint
+const executeQuery = async (client, query, resolve) => {
   try {
     const data = await client.request(query)
-    // console.log(formatJson(data))
-    return formatJson(data)
+    return resolve(data)
   } catch (e) {
     console.log(e)
-    return 'exception'
+    return 'exception occured'
   }
 }
 
@@ -71,28 +60,23 @@ const queryUserReserve = (USER_ADDRESS) => gql`
     }
   }
 `
-
-const queryUserDeposit = (USER_ADDRESS) => gql`
-  {
-    deposits(where: { user: "${USER_ADDRESS}" }) {
-      userReserve {
-        currentATokenBalance
-      }
-      reserve {
-        symbol
-      }
-    }
-  }
-`
+const generalResolver = (data) => {
+  const result = formatJson(data)
+  console.log(result)
+  return result
+}
 
 // we can simply use this client to run quries.
 // executeQuery(aaveMaticClient, testQuery)
 export const getUserDeposit = () =>
   executeQuery(
     aaveMaticClient,
-    queryUserDeposit('0xdaAed1035319299174299D066b41A9a63d87E805'.toLowerCase())
+    userDepositQuery(
+      '0xdaAed1035319299174299D066b41A9a63d87E805'.toLowerCase()
+    ),
+    userDespositResolver
   )
-
+getUserDeposit()
 // executeQuery(aaveV2Client, testQuery)
 // -----------------------------------------------------------------------------
 // Graph ql express server
