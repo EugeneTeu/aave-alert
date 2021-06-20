@@ -76,24 +76,3 @@ export { variableRatesQuery, variableRatesResolver }
 //   result.lastUpdateTimestamp
 // );
 
-// apy/ apr
-
-const reservesQuery = () => gql`
-  {
-    reserves {
-      name
-      underlyingAsset
-
-      liquidityRate
-      stableBorrowRate
-      variableBorrowRate
-
-      aEmissionPerSecond
-      vEmissionPerSecond
-      sEmissionPerSecond
-
-      totalATokenSupply
-      totalCurrentVariableDebt
-    }
-  }
-`

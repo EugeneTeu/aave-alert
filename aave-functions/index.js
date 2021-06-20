@@ -10,12 +10,16 @@ import {
   aaveV2SubgraphEndpoint,
 } from './constants.js'
 
-import { userDepositQuery, userDespositResolver } from './queries/index.js'
-import { formatJson } from './utils/index.js'
 import {
+  userDepositQuery,
+  userDespositResolver,
   variableRatesQuery,
   variableRatesResolver,
-} from './queries/queryRates.js'
+  apyAprQuery,
+  apyAprResolver,
+} from './queries/index.js'
+import { formatJson } from './utils/index.js'
+
 // create a GraphQL client instance to send requests
 const aaveMaticClient = new GraphQLClient(aaveMaticSubgraphEndpoint, {
   headers: {},
@@ -87,9 +91,12 @@ export const getVariableRate = () =>
     variableRatesQuery('USDC'),
     variableRatesResolver
   )
+
+export const getApyApr = () =>
+  executeQuery(aaveMaticClient, apyAprQuery('WMATIC'), apyAprResolver)
 // getUserDeposit()
 // getVariableRate()
-
+getApyApr()
 // executeQuery(aaveV2Client, testQuery)
 // -----------------------------------------------------------------------------
 // Graph ql express server
