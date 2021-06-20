@@ -92,11 +92,13 @@ export const getVariableRate = () =>
     variableRatesResolver
   )
 
-export const getApyApr = () =>
-  executeQuery(aaveMaticClient, apyAprQuery('WMATIC'), apyAprResolver)
+export const getApyApr = (symbol) =>
+  executeQuery(aaveMaticClient, apyAprQuery(symbol), apyAprResolver)
 // getUserDeposit()
 // getVariableRate()
-getApyApr()
+getApyApr('WMATIC')
+getApyApr('WETH')
+
 // executeQuery(aaveV2Client, testQuery)
 // -----------------------------------------------------------------------------
 // Graph ql express server
