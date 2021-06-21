@@ -55,30 +55,61 @@ const apyAprResolver = (data) => {
   const percentDepositAPY = (100 * liquidityRate) / Math.pow(10, 27)
   const percentVariableBorrowAPY = (100 * variableBorrowRate) / Math.pow(10, 27)
   const percentStableBorrowAPY = (100 * variableBorrowRate) / Math.pow(10, 27)
-  console.log([
-    percentVariableBorrowAPY,
-    percentDepositAPY,
-    percentStableBorrowAPY,
-  ])
   // AAVE incentives calculation
   const aEmissionPerYear = aEmissionPerSecond * SECONDS_PER_YEAR
   const vEmissionPerYear = vEmissionPerSecond * SECONDS_PER_YEAR
+
   const { reserve } = data
   // reward price is WMATIC
-
   const percentDepositAPR =
     100 *
     ((aEmissionPerYear * reserve.price.priceInEth * decimals) /
       (totalATokenSupply * priceInEth * reserve.decimals))
-  const percentBorrowAPR =
+  const percentBorrowRewardAPR =
     100 *
     ((vEmissionPerYear * reserve.price.priceInEth * decimals) /
       (totalCurrentVariableDebt * priceInEth * reserve.decimals))
-  console.log(percentBorrowAPR.toPrecision(3))
-  console.log(percentBorrowAPR.toPrecision(3))
+
+  return formatresult({
+    symbol,
+    percentStableBorrowAPY,
+    percentVariableBorrowAPY,
+    percentBorrowRewardAPR,
+    percentDepositAPR,
+    percentDepositAPY,
+  })
 }
-// USDC IS SPECIAL cause 6 decimals
+
+const formatresult = ({
+  symbol,
+  percentStableBorrowAPY,
+  percentVariableBorrowAPY,
+  percentBorrowRewardAPR,
+  percentDepositAPR,
+  percentDepositAPY,
+}) => {
+  const result = [`The current rates for ${symbol} are:`]
+  result.push(`Stable Borrow APY: ${percentStableBorrowAPY.toPrecision(3)}%`)
+  result.push(
+    `Variable Borrow APY: ${percentVariableBorrowAPY.toPrecision(3)}%`
+  )
+  result.push(`Borrow APR (Reward): ${percentBorrowRewardAPR.toPrecision(3)}%`)
+  result.push(
+    `You are charged ${(
+      percentVariableBorrowAPY - percentBorrowRewardAPR
+    ).toPrecision(3)}% for borrowing`
+  )
+
+  result.push(`Deposit APY: ${percentDepositAPY.toPrecision(3)}%`)
+  result.push(`Desposit APR: ${percentDepositAPR.toPrecision(3)}%`)
+  console.log(result.join('\n'))
+  return result.join('\n')
+}
+
 export { apyAprQuery, apyAprResolver }
+
+//TODO: calculate USDC APY APR
+// USDC IS SPECIAL cause 6 decimals
 
 // // deposit and borrow calculation
 // ​
