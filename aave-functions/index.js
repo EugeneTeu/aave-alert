@@ -96,8 +96,10 @@ export const getApyApr = (symbol) =>
   executeQuery(aaveMaticClient, apyAprQuery(symbol), apyAprResolver)
 // getUserDeposit()
 // getVariableRate()
-getApyApr('WMATIC')
-getApyApr('WETH')
+// getApyApr('WMATIC')
+// getApyApr('WETH')
+
+
 
 // executeQuery(aaveV2Client, testQuery)
 // -----------------------------------------------------------------------------
