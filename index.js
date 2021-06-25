@@ -1,6 +1,6 @@
 import { Telegraf, Markup } from 'telegraf'
 import pkg from 'dotenv'
-import { getUserDeposit } from './aave-functions/index.js'
+import { getHealthFactor, getUserDeposit } from './aave-functions/index.js'
 const { config } = pkg
 
 config()
@@ -14,6 +14,18 @@ bot.command('quit', (ctx) => {
 })
 bot.command('name', (ctx) => {
   ctx.reply('hi i am aave monitoring')
+})
+
+bot.command("shaun", (ctx) => {
+  getHealthFactor("0xF4A838260E11551C29D9DeE4B0c71f17bf1385Cb".toLowerCase()).then((result) => ctx.reply(result))
+})
+
+bot.command("eugene", (ctx) => {
+  getHealthFactor('0xdaAed1035319299174299D066b41A9a63d87E805'.toLowerCase()).then((result) => ctx.reply(result))
+})
+
+bot.command("aaron", (ctx) => {
+  getHealthFactor('0xD7C2D39DF7BFEc541364B38fF3E33278971c23Cf'.toLowerCase()).then((result) => ctx.reply(result))
 })
 
 bot.command('deposits', (ctx) => {

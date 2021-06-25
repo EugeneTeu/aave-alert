@@ -17,7 +17,8 @@ import {
   variableRatesResolver,
   apyAprQuery,
   apyAprResolver,
-} from './queries/index.js'
+  getUserHealthFactor
+} from './queriesAndResolvers/index.js'
 import { formatJson } from './utils/index.js'
 
 // create a GraphQL client instance to send requests
@@ -94,42 +95,7 @@ export const getVariableRate = () =>
 
 export const getApyApr = (symbol) =>
   executeQuery(aaveMaticClient, apyAprQuery(symbol), apyAprResolver)
-// getUserDeposit()
-// getVariableRate()
-// getApyApr('WMATIC')
-// getApyApr('WETH')
 
 
-
-// executeQuery(aaveV2Client, testQuery)
-// -----------------------------------------------------------------------------
-// Graph ql express server
-// -----------------------------------------------------------------------------
-
-// const schema1 = await loadSchema('https://api.thegraph.com/subgraphs/name/aave/aave-v2-matic', {   // load from endpoint
-//     loaders: [
-//         new UrlLoader()
-//     ]
-// });
-
-// // Write some resolvers
-// const resolvers = {};
-
-// // Add resolvers to the schema
-// const schemaWithResolvers = addResolversToSchema({
-//     schema,
-//     resolvers,
-// });
-
-// // const app = express();
-
-// // app.use(
-// //     graphqlHTTP({
-// //         schema: schemaWithResolvers,
-// //         graphiql: true,
-// //     })
-// // );
-
-// // app.listen(4000, () => {
-// //     console.info(`Server listening on http://localhost:4000`)
-// // })
+export const getHealthFactor = (userWalletAddress) => getUserHealthFactor(userWalletAddress, executeQuery, aaveMaticClient)
+  
