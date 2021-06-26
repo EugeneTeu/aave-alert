@@ -12,28 +12,53 @@ bot.command('quit', (ctx) => {
   // Using context shortcut
   ctx.leaveChat()
 })
+
+bot.settings(async (ctx) => {
+  await ctx.setMyCommands([
+    {
+      command: '/name',
+      description: 'echo',
+    },
+  ])
+  return ctx.reply('Ok')
+})
+bot.help(async (ctx) => {
+  const commands = await ctx.getMyCommands()
+  const info = commands.reduce(
+    (acc, val) => `${acc}/${val.command} - ${val.description}\n`,
+    ''
+  )
+  return ctx.reply(info)
+})
 bot.command('name', (ctx) => {
   ctx.reply('hi i am aave monitoring')
 })
 
-bot.command("shaun", (ctx) => {
-  getHealthFactor("0xF4A838260E11551C29D9DeE4B0c71f17bf1385Cb".toLowerCase()).then((result) => ctx.reply(result))
+bot.command('shaun', (ctx) => {
+  getHealthFactor(
+    '0xF4A838260E11551C29D9DeE4B0c71f17bf1385Cb'.toLowerCase()
+  ).then((result) => ctx.reply(result))
 })
 
-bot.command("eugene", (ctx) => {
-  getHealthFactor('0xdaAed1035319299174299D066b41A9a63d87E805'.toLowerCase()).then((result) => ctx.reply(result))
+bot.command('eugene', async (ctx) => {
+  const userWalletAddress =
+    '0xdaAed1035319299174299D066b41A9a63d87E805'.toLowerCase()
+  const result = await getHealthFactor(userWalletAddress)
+  const result2 = await getUserDeposit(userWalletAddress)
+  ctx.reply(`${result}\n${result2}`)
 })
 
-bot.command("aaron", (ctx) => {
-  getHealthFactor('0xD7C2D39DF7BFEc541364B38fF3E33278971c23Cf'.toLowerCase()).then((result) => ctx.reply(result))
+bot.command('aaron', (ctx) => {
+  getHealthFactor(
+    '0xD7C2D39DF7BFEc541364B38fF3E33278971c23Cf'.toLowerCase()
+  ).then((result) => ctx.reply(result))
+
+  getUserDeposit()
 })
 
 bot.command('deposits', (ctx) => {
   getUserDeposit().then((result) => ctx.reply(result))
 })
-
-// bot.command('oldschool', (ctx) => ctx.reply('Hello'))
-// bot.command('hipster', Telegraf.reply('λ'))
 
 bot.launch()
 
