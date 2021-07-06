@@ -42,6 +42,7 @@ bot.command('deposits', (ctx) => {
 // bot.command('hipster', Telegraf.reply('λ'))
 
 bot.startWebhook(`/bot${API_TOKEN}`, null, PORT)
+bot.launch()
 // Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
