@@ -4,7 +4,13 @@ import { getHealthFactor, getUserDeposit } from './aave-functions/index.js'
 const { config } = pkg
 
 config()
-const bot = new Telegraf(process.env.BOT_TOKEN)
+const API_TOKEN = process.env.BOT_TOKEN || '';
+const PORT = process.env.PORT || 3000;
+const URL = process.env.URL || 'https://your-heroku-app.herokuapp.com';
+
+const bot = new Telegraf(API_TOKEN);
+bot.telegram.setWebhook(`${URL}/bot${API_TOKEN}`);
+
 
 bot.start((ctx) => ctx.reply('Hello there.'))
 
@@ -35,8 +41,7 @@ bot.command('deposits', (ctx) => {
 // bot.command('oldschool', (ctx) => ctx.reply('Hello'))
 // bot.command('hipster', Telegraf.reply('λ'))
 
-bot.launch()
-
+bot.startWebhook(`/bot${API_TOKEN}`, null, PORT)
 // Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
