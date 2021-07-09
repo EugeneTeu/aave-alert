@@ -18,6 +18,8 @@ import {
   apyAprQuery,
   apyAprResolver,
   getUserHealthFactor,
+  userReserveQuery,
+  userReserveResolver
 } from './queriesAndResolvers/index.js'
 import { formatJson } from './utils/index.js'
 
@@ -82,6 +84,15 @@ export const getUserDeposit = (userWalletAddress) =>
     aaveMaticClient,
     userDepositQuery(userWalletAddress),
     userDespositResolver
+  )
+
+// we can simply use this client to run quries.
+// executeQuery(aaveMaticClient, testQuery)
+export const getUserReserve = (userWalletAddress) =>
+  executeQuery(
+    aaveMaticClient,
+    userReserveQuery(userWalletAddress),
+    userReserveResolver
   )
 
 export const getVariableRate = () =>
