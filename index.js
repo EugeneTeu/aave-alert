@@ -4,6 +4,28 @@ import { getHealthFactor, getUserDeposit, getUserReserve } from './aave-function
 const { config } = pkg
 import { utils } from "ethers"
 
+const getShaunHealthFactorAndDeposit = async (ctx) => {
+  const userWalletAddress = await getHealthFactor(
+     '0xF4A838260E11551C29D9DeE4B0c71f17bf1385Cb'.toLowerCase()
+   )
+   const result = await getHealthFactor(userWalletAddress)
+   const result2 = await getUserReserve(userWalletAddress.toLowerCase())
+   return ctx.reply(`${result}\n${result2}`)
+ }
+ const getEugeneHealthFactorAndDeposit =  async (ctx) => {
+  try {
+  const userWalletAddress =
+    '0xdaAed1035319299174299D066b41A9a63d87E805'.toLowerCase()
+  const result = await getHealthFactor(userWalletAddress)
+  const result2 = await getUserReserve(userWalletAddress.toLowerCase())
+  return ctx.reply(`${result}\n${result2}`)
+  } catch (e) {
+    console.log(e)
+    return ctx.reply(`Error occured la`)
+  }
+  
+}
+
 config()
 const API_TOKEN = process.env.BOT_TOKEN || '';
 const PORT = process.env.PORT || 3000;
@@ -24,30 +46,11 @@ bot.command("alive", (ctx) => {
   ctx.reply('hi i am alive')
 } )
 
-bot.command('shaun', async (ctx) => {
- const userWalletAddress = await getHealthFactor(
-    '0xF4A838260E11551C29D9DeE4B0c71f17bf1385Cb'.toLowerCase()
-  )
-  const result = await getHealthFactor(userWalletAddress)
-  const result2 = await getUserReserve(address.toLowerCase())
-  return ctx.reply(`${result}\n${result2}`)
-})
+bot.command('shaun', getShaunHealthFactorAndDeposit)
+bot.command('Shaun', getShaunHealthFactorAndDeposit)
+bot.command('eugene', getEugeneHealthFactorAndDeposit)
+bot.command('Eugene', getEugeneHealthFactorAndDeposit)
 
-bot.command('eugene', async (ctx) => {
-  const userWalletAddress =
-    '0xdaAed1035319299174299D066b41A9a63d87E805'.toLowerCase()
-  const result = await getHealthFactor(userWalletAddress)
-  const result2 = await getUserReserve(address.toLowerCase())
-  return ctx.reply(`${result}\n${result2}`)
-})
-
-// bot.command('aaron', (ctx) => {
-//   getHealthFactor(
-//     '0xD7C2D39DF7BFEc541364B38fF3E33278971c23Cf'.toLowerCase()
-//   ).then((result) => ctx.reply(result))
-
-//   getUserDeposit()
-// })
 
 bot.command('dp', async (ctx) => {
   const { update : { 
