@@ -25,17 +25,19 @@ bot.command("alive", (ctx) => {
 } )
 
 bot.command('shaun', async (ctx) => {
- const result = await getHealthFactor(
+ const userWalletAddress = await getHealthFactor(
     '0xF4A838260E11551C29D9DeE4B0c71f17bf1385Cb'.toLowerCase()
   )
-  return ctx.reply(`${result}`)
+  const result = await getHealthFactor(userWalletAddress)
+  const result2 = await getUserReserve(address.toLowerCase())
+  return ctx.reply(`${result}\n${result2}`)
 })
 
 bot.command('eugene', async (ctx) => {
   const userWalletAddress =
     '0xdaAed1035319299174299D066b41A9a63d87E805'.toLowerCase()
   const result = await getHealthFactor(userWalletAddress)
-  const result2 = await getUserDeposit(userWalletAddress)
+  const result2 = await getUserReserve(address.toLowerCase())
   return ctx.reply(`${result}\n${result2}`)
 })
 
@@ -64,9 +66,9 @@ bot.command('dp', async (ctx) => {
     const { reason, value } = e 
     return ctx.reply(`Received: ${value}\n rejected as ${reason}`)
   }
-
-  const result = await getUserReserve(address.toLowerCase())
-  return ctx.reply(result)
+  const result = await getHealthFactor(userWalletAddress)
+  const result2 = await getUserReserve(address.toLowerCase())
+  return ctx.reply(`${result}\n${result2}`)
 })
 
 // bot.command('oldschool', (ctx) => ctx.reply('Hello'))
