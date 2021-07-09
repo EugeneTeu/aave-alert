@@ -73,7 +73,7 @@ bot.command('dp', async (ctx) => {
     const { reason, value } = e 
     return ctx.reply(`Received: ${value}\n rejected as ${reason}`)
   }
-  const result = await getHealthFactor(userWalletAddress)
+  const result = await getHealthFactor(address.toLowerCase())
   const result2 = await getUserReserve(address.toLowerCase())
   return ctx.reply(`${result}\n${result2}`)
 })
