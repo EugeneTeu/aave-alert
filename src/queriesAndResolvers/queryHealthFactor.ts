@@ -1,15 +1,13 @@
-import { gql } from 'apollo-server'
+import { gql } from '@apollo/client'
 import { formatJson, formatUSDC, formatERC20 } from '../utils/index.js'
 
-import {
-  formatUserSummaryData,
-} from '@aave/protocol-js'
+import { formatUserSummaryData } from '@aave/protocol-js'
 
 const POOL = '0xb53c1a33016b2dc2ff3653530bff1848a515c8c5'.toLowerCase()
 
 // GraphQL queries
 const poolReservesDataGQL = gql`
-  {
+  query POOL_RESERVE_DATA {
     reserves {
       id
       underlyingAsset
@@ -62,7 +60,7 @@ const poolReservesDataGQL = gql`
 
 const rawUserReservesGQL = (USER) => {
   return gql`
-  {
+  query RAW_USER_RESERVE {
     userReserves(where: { user: "${USER}"}) {
       scaledATokenBalance
       usageAsCollateralEnabledOnUser
@@ -90,7 +88,7 @@ const rawUserReservesGQL = (USER) => {
 }
 
 const usdPriceInETHGQL = gql`
-  {
+  query USD_PRICE_IN_ETH {
     priceOracle(id: 1) {
       usdPriceEth
     }
@@ -117,9 +115,7 @@ const getUserHealthFactor = async (user, executeQuery, aaveMaticClient) => {
     usdPriceInETHGQL,
     (data) => data
   )
-  const {
-    healthFactor
-  } = formatUserSummaryData(
+  const { healthFactor } = formatUserSummaryData(
     poolReservesData.reserves,
     rawUserReservesData.userReserves,
     userId(),

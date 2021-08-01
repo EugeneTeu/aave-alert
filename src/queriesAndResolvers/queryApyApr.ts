@@ -2,7 +2,7 @@ import { gql } from 'apollo-server'
 import { formatJson, formatUSDC, formatERC20 } from '../utils/index.js'
 // WMATIC reserve because reward is in WMATIC
 const apyAprQuery = (symbol) => gql`
-  {  
+  query APY_APR_QUERY {  
 
     reserve(id: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf12700xd05e3e715d945b59290df0ae8ef85c1bdb684744") {
     symbol

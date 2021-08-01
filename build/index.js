@@ -44,7 +44,7 @@ const getEugeneHealthFactorAndDeposit = (ctx) => __awaiter(void 0, void 0, void 
 config();
 const API_TOKEN = process.env.BOT_TOKEN || '';
 const PORT = process.env.PORT || 3000;
-const URL = process.env.URL || 'https://your-heroku-app.herokuapp.com';
+const URL = process.env.URL;
 const bot = new telegraf_1.Telegraf(API_TOKEN);
 // bot.telegram.setWebhook(`${URL}/bot${API_TOKEN}`)
 bot.start((ctx) => ctx.reply('Hello there.'));

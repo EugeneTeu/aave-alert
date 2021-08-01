@@ -1,8 +1,9 @@
-import { gql } from 'apollo-server'
-import { formatJson, formatUSDC, formatERC20 } from '../utils/index.js'
+import { gql } from '@apollo/client'
+import { formatUSDC, formatERC20 } from '../utils/index.js'
+import { USER_DEPOSIT_QUERY } from './types/USER_DEPOSIT_QUERY'
 // userDeposit gql query
-const userDepositQuery = (USER_ADDRESS) => gql`
-  {
+const userDepositQuery = (USER_ADDRESS: string) => gql`
+  query USER_DEPOSIT_QUERY {
     deposits(where: { user: "${USER_ADDRESS}" }) {
       userReserve {
         currentATokenBalance
@@ -14,7 +15,7 @@ const userDepositQuery = (USER_ADDRESS) => gql`
     }
   }
 `
-const userDespositResolver = (data) => {
+const userDespositResolver = (data: USER_DEPOSIT_QUERY) => {
   // object returned from gql is json object
   const { deposits } = data
   // key : symbol, value: amount (string)
@@ -23,19 +24,24 @@ const userDespositResolver = (data) => {
     .filter(
       ({ userReserve: { currentATokenBalance } }) => currentATokenBalance > 0
     )
-    .map((data) => {
-      const {
-        userReserve: { currentATokenBalance },
-        reserve: { symbol, variableBorrowRate },
-      } = data
-      let formattedBalance = '0'
-      if (symbol === 'USDC') {
-        formattedBalance = formatUSDC(currentATokenBalance)
-      } else {
-        formattedBalance = formatERC20(currentATokenBalance)
+    .map(
+      (data: {
+        userReserve: { currentATokenBalance: any }
+        reserve: { symbol: any; variableBorrowRate: any }
+      }) => {
+        const {
+          userReserve: { currentATokenBalance },
+          reserve: { symbol, variableBorrowRate },
+        } = data
+        let formattedBalance = '0'
+        if (symbol === 'USDC') {
+          formattedBalance = formatUSDC(currentATokenBalance)
+        } else {
+          formattedBalance = formatERC20(currentATokenBalance)
+        }
+        balances.set(symbol, formattedBalance)
       }
-      balances.set(symbol, formattedBalance)
-    })
+    )
 
   return formatDataForBot(balances)
 }
@@ -43,7 +49,7 @@ const userDespositResolver = (data) => {
 // takes in a map of { symbol: amount }
 //TODO: move to bot function folder
 // bot function folder will compose graphql calls together
-const formatDataForBot = (balance) => {
+const formatDataForBot = (balance: Map<any, any>) => {
   let result = ['You currently have the following deposits in AAVE:\n']
   for (let [key, value] of balance) {
     const string = `${key}: ${value}\n`

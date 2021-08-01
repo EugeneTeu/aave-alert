@@ -5,7 +5,7 @@ import { calculateAverageRate } from '@aave/protocol-js'
 
 // query rates by symbols
 const variableRatesQuery = (symbol) => gql`
-  {
+  query VARIABLE_RATES_QUERY {
     reserves(first: 1, where: { symbol: "${symbol}"  }) {
        symbol
     lastUpdateTimestamp
@@ -75,4 +75,3 @@ export { variableRatesQuery, variableRatesResolver }
 //   result.paramsHistory[0].timestamp,
 //   result.lastUpdateTimestamp
 // );
-
