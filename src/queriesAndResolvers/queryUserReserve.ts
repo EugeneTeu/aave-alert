@@ -16,25 +16,25 @@ const userReserveQuery = (USER_ADDRESS) => gql`
 `
 const userReserveResolver = (data) => {
   console.log(data)
-   // object returned from gql is json object
-   const { userReserves } = data
-   // key : symbol, value: amount (string)
-   const balances = new Map()
-   userReserves.filter( ({scaledATokenBalance}) => scaledATokenBalance > 0 ).map((data) => {
-     const {
-       scaledATokenBalance,
-       reserve: {
-         symbol 
-       }
+  // object returned from gql is json object
+  const { userReserves } = data
+  // key : symbol, value: amount (string)
+  const balances = new Map()
+  userReserves
+    .filter(({ scaledATokenBalance }) => scaledATokenBalance > 0)
+    .map((data) => {
+      const {
+        scaledATokenBalance,
+        reserve: { symbol },
       } = data
-       let formattedBalance = '0'
-       if (symbol === 'USDC') {
-         formattedBalance = formatUSDC(scaledATokenBalance)
-       } else {
-         formattedBalance = formatERC20(scaledATokenBalance)
-       }
-       balances.set(symbol, formattedBalance)
-   }) 
+      let formattedBalance = '0'
+      if (symbol === 'USDC') {
+        formattedBalance = formatUSDC(scaledATokenBalance)
+      } else {
+        formattedBalance = formatERC20(scaledATokenBalance)
+      }
+      balances.set(symbol, formattedBalance)
+    })
 
   return formatDataForBot(balances)
 }
@@ -50,6 +50,5 @@ const formatDataForBot = (balance) => {
   }
   return result.join('')
 }
-
 
 export { userReserveQuery, userReserveResolver }

@@ -2,10 +2,10 @@
   "name": "aave-alert",
   "version": "1.0.0",
   "description": "Alert bot for aave",
-  "main": "index.js",
+  "main": "index.ts",
   "license": "MIT",
   "scripts": {
-    "start": "node ."
+    "start": "tsc --project ./ && node build/index.js"
   },
   "dependencies": {
     "@aave/protocol-js": "^2.7.2",
@@ -21,9 +21,9 @@
     "graphql-tools": "^7.0.5",
     "micro-bot": "^2.5.3",
     "node-fetch": "^2.6.1",
-    "telegraf": "^4.3.0"
+    "telegraf": "^4.3.0",
+    "typescript": "^4.3.5"
   },
-  "type": "module",
   "devDependencies": {
     "prettier": "2.3.1"
   }

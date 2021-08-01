@@ -19,7 +19,7 @@ import {
   apyAprResolver,
   getUserHealthFactor,
   userReserveQuery,
-  userReserveResolver
+  userReserveResolver,
 } from './queriesAndResolvers/index.js'
 import { formatJson } from './utils/index.js'
 
