@@ -5,7 +5,9 @@
   "main": "index.ts",
   "license": "MIT",
   "scripts": {
-    "start": "tsc --project ./ && node build/index.js"
+    "start": "tsc --project ./ && node build/index.js",
+    "build": "tsc --project ./",
+    "deploy": "node build/index.js"
   },
   "dependencies": {
     "@aave/protocol-js": "^2.7.2",
