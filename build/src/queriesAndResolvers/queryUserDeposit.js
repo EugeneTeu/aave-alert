@@ -5,7 +5,7 @@ const apollo_server_1 = require("apollo-server");
 const index_js_1 = require("../utils/index.js");
 // userDeposit gql query
 const userDepositQuery = (USER_ADDRESS) => apollo_server_1.gql `
-  {
+  query USER_DEPOSIT_QUERY {
     deposits(where: { user: "${USER_ADDRESS}" }) {
       userReserve {
         currentATokenBalance

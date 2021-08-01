@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'
+import { gql } from 'apollo-server'
 
 import { formatUSDC, formatERC20 } from '../utils/index.js'
 import { USER_RESERVE_QUERY } from './types/USER_RESERVE_QUERY.js'
@@ -16,7 +16,7 @@ const userReserveQuery = (USER_ADDRESS: any) => gql`
   }
 `
 const userReserveResolver = (data: USER_RESERVE_QUERY) => {
-  console.log(data)
+  // console.log(JSON.stringify(data, null, 1))
   // object returned from gql is json object
   const { userReserves } = data
   // key : symbol, value: amount (string)

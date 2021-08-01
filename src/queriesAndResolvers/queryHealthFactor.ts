@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'
+import { gql } from 'apollo-server'
 import { formatJson, formatUSDC, formatERC20 } from '../utils/index.js'
 
 import { formatUserSummaryData } from '@aave/protocol-js'

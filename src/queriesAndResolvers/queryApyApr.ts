@@ -1,5 +1,6 @@
 import { gql } from 'apollo-server'
 import { formatJson, formatUSDC, formatERC20 } from '../utils/index.js'
+import { APY_APR_QUERY } from './types/APY_APR_QUERY'
 // WMATIC reserve because reward is in WMATIC
 const apyAprQuery = (symbol) => gql`
   query APY_APR_QUERY {  
@@ -34,8 +35,17 @@ const apyAprQuery = (symbol) => gql`
 `
 const SECONDS_PER_YEAR = 365 * 86400
 
-const apyAprResolver = (data) => {
+const apyAprResolver = (data: APY_APR_QUERY) => {
+  // console.log(JSON.stringify(data))
   const { reserves } = data
+  const { reserve } = data
+
+  if (reserve == null) {
+    return 'Symbol not supported by AAVE on polygon'
+  }
+  if (reserves.length === 0) {
+    return 'Symbol not supported by AAVE on polygon'
+  }
   const {
     symbol,
     underlyingAsset,
@@ -59,7 +69,6 @@ const apyAprResolver = (data) => {
   const aEmissionPerYear = aEmissionPerSecond * SECONDS_PER_YEAR
   const vEmissionPerYear = vEmissionPerSecond * SECONDS_PER_YEAR
 
-  const { reserve } = data
   // reward price is WMATIC
   const percentDepositAPR =
     100 *
@@ -102,7 +111,12 @@ const formatresult = ({
 
   result.push(`Deposit APY: ${percentDepositAPY.toPrecision(3)}%`)
   result.push(`Desposit APR: ${percentDepositAPR.toPrecision(3)}%`)
-  console.log(result.join('\n'))
+  result.push(
+    `total reward (APY + APR): ${(
+      percentDepositAPR + percentDepositAPY
+    ).toPrecision(3)}%`
+  )
+  // console.log(result.join('\n'))
   return result.join('\n')
 }
 

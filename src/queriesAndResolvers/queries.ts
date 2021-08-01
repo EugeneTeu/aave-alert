@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'
+import { gql } from 'apollo-server'
 import { GraphQLClient } from 'graphql-request'
 
 import {
@@ -20,7 +20,7 @@ const aaveMaticClient = new GraphQLClient(aaveMaticSubgraphEndpoint, {
 const aaveV2Client = new GraphQLClient(aaveV2SubgraphEndpoint, {
   headers: {},
 })
-
+//TODO: fix this typing
 // takes in a client, a http query, a resolver to resolve graphql data from endpoint
 const executeQuery = async (client, query, resolve) => {
   try {
@@ -55,7 +55,7 @@ const generalResolver = (data) => {
 
 // we can simply use this client to run quries.
 // executeQuery(aaveMaticClient, testQuery)
-export const getUserDeposit = (userWalletAddress) =>
+export const getUserDeposit = async (userWalletAddress) =>
   executeQuery(
     aaveMaticClient,
     userDepositQuery(userWalletAddress),
@@ -64,22 +64,22 @@ export const getUserDeposit = (userWalletAddress) =>
 
 // we can simply use this client to run quries.
 // executeQuery(aaveMaticClient, testQuery)
-export const getUserReserve = (userWalletAddress) =>
+export const getUserReserve = async (userWalletAddress) =>
   executeQuery(
     aaveMaticClient,
     userReserveQuery(userWalletAddress),
     userReserveResolver
   )
 
-export const getVariableRate = () =>
+export const getVariableRate = async () =>
   executeQuery(
     aaveMaticClient,
     variableRatesQuery('USDC'),
     variableRatesResolver
   )
 
-export const getApyApr = (symbol) =>
+export const getApyApr = async (symbol) =>
   executeQuery(aaveMaticClient, apyAprQuery(symbol), apyAprResolver)
 
-export const getHealthFactor = (userWalletAddress) =>
+export const getHealthFactor = async (userWalletAddress) =>
   getUserHealthFactor(userWalletAddress, executeQuery, aaveMaticClient)

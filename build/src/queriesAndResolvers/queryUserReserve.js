@@ -4,7 +4,7 @@ exports.userReserveResolver = exports.userReserveQuery = void 0;
 const apollo_server_1 = require("apollo-server");
 const index_js_1 = require("../utils/index.js");
 const userReserveQuery = (USER_ADDRESS) => apollo_server_1.gql `
-  {
+  query USER_RESERVE_QUERY {
     userReserves(where: { user: "${USER_ADDRESS}" }) {
       scaledATokenBalance
       reserve {
@@ -18,7 +18,7 @@ const userReserveQuery = (USER_ADDRESS) => apollo_server_1.gql `
 `;
 exports.userReserveQuery = userReserveQuery;
 const userReserveResolver = (data) => {
-    console.log(data);
+    // console.log(JSON.stringify(data, null, 1))
     // object returned from gql is json object
     const { userReserves } = data;
     // key : symbol, value: amount (string)

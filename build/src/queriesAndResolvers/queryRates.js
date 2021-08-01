@@ -6,7 +6,7 @@ const protocol_js_1 = require("@aave/protocol-js");
 //TODO: just follow sdk...
 // query rates by symbols
 const variableRatesQuery = (symbol) => apollo_server_1.gql `
-  {
+  query VARIABLE_RATES_QUERY {
     reserves(first: 1, where: { symbol: "${symbol}"  }) {
        symbol
     lastUpdateTimestamp

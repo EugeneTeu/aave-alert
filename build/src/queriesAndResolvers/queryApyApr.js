@@ -4,7 +4,7 @@ exports.apyAprResolver = exports.apyAprQuery = void 0;
 const apollo_server_1 = require("apollo-server");
 // WMATIC reserve because reward is in WMATIC
 const apyAprQuery = (symbol) => apollo_server_1.gql `
-  {  
+  query APY_APR_QUERY {  
 
     reserve(id: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf12700xd05e3e715d945b59290df0ae8ef85c1bdb684744") {
     symbol
@@ -37,7 +37,16 @@ const apyAprQuery = (symbol) => apollo_server_1.gql `
 exports.apyAprQuery = apyAprQuery;
 const SECONDS_PER_YEAR = 365 * 86400;
 const apyAprResolver = (data) => {
+    console.log(JSON.stringify(data));
     const { reserves } = data;
+    const { reserve } = data;
+    // TODO: fix null
+    if (reserve == null) {
+        return 'Symbol not supported by AAVE on polygon';
+    }
+    if (reserves.length === 0) {
+        return 'Symbol not supported by AAVE on polygon';
+    }
     const { symbol, underlyingAsset, price: { priceInEth }, decimals, liquidityRate, stableBorrowRate, variableBorrowRate, aEmissionPerSecond, vEmissionPerSecond, sEmissionPerSecond, totalATokenSupply, totalCurrentVariableDebt, } = reserves[0];
     // deposit and borrow apy
     const percentDepositAPY = (100 * liquidityRate) / Math.pow(10, 27);
@@ -46,7 +55,6 @@ const apyAprResolver = (data) => {
     // AAVE incentives calculation
     const aEmissionPerYear = aEmissionPerSecond * SECONDS_PER_YEAR;
     const vEmissionPerYear = vEmissionPerSecond * SECONDS_PER_YEAR;
-    const { reserve } = data;
     // reward price is WMATIC
     const percentDepositAPR = 100 *
         ((aEmissionPerYear * reserve.price.priceInEth * decimals) /
@@ -72,6 +80,7 @@ const formatresult = ({ symbol, percentStableBorrowAPY, percentVariableBorrowAPY
     result.push(`You are charged ${(percentVariableBorrowAPY - percentBorrowRewardAPR).toPrecision(3)}% for borrowing`);
     result.push(`Deposit APY: ${percentDepositAPY.toPrecision(3)}%`);
     result.push(`Desposit APR: ${percentDepositAPR.toPrecision(3)}%`);
+    result.push(`total reward (APY + APR): ${(percentDepositAPR + percentDepositAPY).toPrecision(3)}%`);
     console.log(result.join('\n'));
     return result.join('\n');
 };

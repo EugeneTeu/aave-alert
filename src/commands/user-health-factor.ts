@@ -1,10 +1,11 @@
+import { Context } from 'telegraf'
 import {
   getHealthFactor,
   getUserDeposit,
   getUserReserve,
 } from '../queriesAndResolvers'
 
-const getShaunHealthFactorAndDeposit = async (ctx) => {
+const getShaunHealthFactorAndDeposit = async (ctx: Context) => {
   try {
     const userWalletAddress =
       '0xF4A838260E11551C29D9DeE4B0c71f17bf1385Cb'.toLowerCase()
@@ -17,7 +18,7 @@ const getShaunHealthFactorAndDeposit = async (ctx) => {
     return ctx.reply(`Error occured la`)
   }
 }
-const getEugeneHealthFactorAndDeposit = async (ctx) => {
+const getEugeneHealthFactorAndDeposit = async (ctx: Context) => {
   try {
     const userWalletAddress =
       '0xdaAed1035319299174299D066b41A9a63d87E805'.toLowerCase()

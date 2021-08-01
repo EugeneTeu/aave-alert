@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'
+import { gql } from 'apollo-server'
 import { formatUSDC, formatERC20 } from '../utils/index.js'
 import { USER_DEPOSIT_QUERY } from './types/USER_DEPOSIT_QUERY'
 // userDeposit gql query
