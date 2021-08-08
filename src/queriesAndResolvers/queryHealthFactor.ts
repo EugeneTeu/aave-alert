@@ -3,6 +3,11 @@ import { formatJson, formatUSDC, formatERC20 } from '../utils/index.js'
 
 import { formatUserSummaryData } from '@aave/protocol-js'
 
+import {
+  RAW_USER_RESERVE,
+  RAW_USER_RESERVE_userReserves,
+} from './types/RAW_USER_RESERVE'
+
 const POOL = '0xb53c1a33016b2dc2ff3653530bff1848a515c8c5'.toLowerCase()
 
 // GraphQL queries
@@ -105,11 +110,12 @@ const getUserHealthFactor = async (user, executeQuery, aaveMaticClient) => {
     poolReservesDataGQL,
     (data) => data
   )
-  const rawUserReservesData = await executeQuery(
+  const rawUserReservesData: RAW_USER_RESERVE = await executeQuery(
     aaveMaticClient,
     rawUserReservesGQL(user),
     (data) => data
   )
+
   const usdPriceInETH = await executeQuery(
     aaveMaticClient,
     usdPriceInETHGQL,

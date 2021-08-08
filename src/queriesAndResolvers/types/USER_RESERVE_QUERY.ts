@@ -22,6 +22,7 @@ export interface USER_RESERVE_QUERY_userReserves_user {
 
 export interface USER_RESERVE_QUERY_userReserves {
   __typename: "UserReserve";
+  currentATokenBalance: any;
   scaledATokenBalance: any;
   reserve: USER_RESERVE_QUERY_userReserves_reserve;
   user: USER_RESERVE_QUERY_userReserves_user;

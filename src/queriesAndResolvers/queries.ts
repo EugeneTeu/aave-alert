@@ -1,17 +1,14 @@
 import { gql } from 'apollo-server'
 import { GraphQLClient } from 'graphql-request'
 
-import {
-  aaveMaticSubgraphEndpoint,
-  aaveV2SubgraphEndpoint,
-} from '../constants.js'
+import { aaveMaticSubgraphEndpoint, aaveV2SubgraphEndpoint } from '../constants'
 
-import { formatJson } from '../utils/index.js'
-import { apyAprQuery, apyAprResolver } from './queryApyApr.js'
-import { getUserHealthFactor } from './queryHealthFactor.js'
-import { variableRatesQuery, variableRatesResolver } from './queryRates.js'
-import { userDepositQuery, userDespositResolver } from './queryUserDeposit.js'
-import { userReserveQuery, userReserveResolver } from './queryUserReserve.js'
+import { formatJson } from '../utils/index'
+import { apyAprQuery, apyAprResolver } from './queryApyApr'
+import { getUserHealthFactor } from './queryHealthFactor'
+import { variableRatesQuery, variableRatesResolver } from './queryRates'
+import { userDepositQuery, userDespositResolver } from './queryUserDeposit'
+import { userReserveQuery, userReserveResolver } from './queryUserReserve'
 
 // create a GraphQL client instance to send requests
 const aaveMaticClient = new GraphQLClient(aaveMaticSubgraphEndpoint, {

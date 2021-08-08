@@ -1,5 +1,5 @@
 import { gql } from 'apollo-server'
-import { formatUSDC, formatERC20 } from '../utils/index.js'
+import { formatUSDC, formatERC20 } from '../utils'
 import { USER_DEPOSIT_QUERY } from './types/USER_DEPOSIT_QUERY'
 // userDeposit gql query
 const userDepositQuery = (USER_ADDRESS: string) => gql`

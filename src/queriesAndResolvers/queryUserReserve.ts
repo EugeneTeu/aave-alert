@@ -1,10 +1,11 @@
 import { gql } from 'apollo-server'
 
-import { formatUSDC, formatERC20 } from '../utils/index.js'
-import { USER_RESERVE_QUERY } from './types/USER_RESERVE_QUERY.js'
+import { formatUSDC, formatERC20 } from '../utils'
+import { USER_RESERVE_QUERY } from './types/USER_RESERVE_QUERY'
 const userReserveQuery = (USER_ADDRESS: any) => gql`
   query USER_RESERVE_QUERY {
     userReserves(where: { user: "${USER_ADDRESS}" }) {
+      currentATokenBalance
       scaledATokenBalance
       reserve {
         symbol
@@ -16,23 +17,24 @@ const userReserveQuery = (USER_ADDRESS: any) => gql`
   }
 `
 const userReserveResolver = (data: USER_RESERVE_QUERY) => {
+  // console.log(data.userReserves)
   // console.log(JSON.stringify(data, null, 1))
   // object returned from gql is json object
   const { userReserves } = data
   // key : symbol, value: amount (string)
   const balances = new Map()
   userReserves
-    .filter(({ scaledATokenBalance }) => scaledATokenBalance > 0)
-    .map((data: { scaledATokenBalance: any; reserve: { symbol: any } }) => {
+    .filter(({ currentATokenBalance }) => currentATokenBalance > 0)
+    .map((data: { currentATokenBalance: any; reserve: { symbol: any } }) => {
       const {
-        scaledATokenBalance,
+        currentATokenBalance,
         reserve: { symbol },
       } = data
       let formattedBalance = '0'
       if (symbol === 'USDC') {
-        formattedBalance = formatUSDC(scaledATokenBalance)
+        formattedBalance = formatUSDC(currentATokenBalance)
       } else {
-        formattedBalance = formatERC20(scaledATokenBalance)
+        formattedBalance = formatERC20(currentATokenBalance)
       }
       balances.set(symbol, formattedBalance)
     })
