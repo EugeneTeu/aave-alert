@@ -7,7 +7,13 @@ import {
   RAW_USER_RESERVE,
   RAW_USER_RESERVE_userReserves,
 } from './types/RAW_USER_RESERVE'
-
+import { POOL_RESERVE_DATA } from './types/POOL_RESERVE_DATA'
+import {
+  ReserveData,
+  UserReserveData,
+  UserSummaryData,
+  ComputedUserReserve,
+} from '@aave/protocol-js/dist/v2'
 const POOL = '0xb53c1a33016b2dc2ff3653530bff1848a515c8c5'.toLowerCase()
 
 // GraphQL queries
@@ -67,6 +73,7 @@ const rawUserReservesGQL = (USER) => {
   return gql`
   query RAW_USER_RESERVE {
     userReserves(where: { user: "${USER}"}) {
+      currentATokenBalance
       scaledATokenBalance
       usageAsCollateralEnabledOnUser
       scaledVariableDebt
@@ -99,36 +106,82 @@ const usdPriceInETHGQL = gql`
     }
   }
 `
-// userId
+// // userId
 const userId = () => '0xdaAed1035319299174299D066b41A9a63d87E805'.toLowerCase()
 
 const currentTimeStamp = () => Math.floor(Date.now() / 1000)
 
-const getUserHealthFactor = async (user, executeQuery, aaveMaticClient) => {
-  const poolReservesData = await executeQuery(
+const getUserHealthFactor = async (
+  userId: string,
+  executeQuery,
+  aaveMaticClient
+) => {
+  const { reserves }: { reserves: ReserveData[] } = await executeQuery(
     aaveMaticClient,
     poolReservesDataGQL,
     (data) => data
   )
-  const rawUserReservesData: RAW_USER_RESERVE = await executeQuery(
-    aaveMaticClient,
-    rawUserReservesGQL(user),
-    (data) => data
-  )
+  const { userReserves }: { userReserves: UserReserveData[] } =
+    await executeQuery(
+      aaveMaticClient,
+      rawUserReservesGQL(userId),
+      (data) => data
+    )
 
   const usdPriceInETH = await executeQuery(
     aaveMaticClient,
     usdPriceInETHGQL,
     (data) => data
   )
-  const { healthFactor } = formatUserSummaryData(
-    poolReservesData.reserves,
-    rawUserReservesData.userReserves,
-    userId(),
+
+  const { healthFactor, reservesData }: UserSummaryData = formatUserSummaryData(
+    reserves,
+    userReserves,
+    userId,
     usdPriceInETH,
     currentTimeStamp()
   )
-  return formatHealthFactorAnwser(parseFloat(healthFactor).toPrecision(3))
+
+  const healthFactorAnswer = formatHealthFactorAnwser(
+    parseFloat(healthFactor).toPrecision(3)
+  )
+  const userDepositsAndBorrowings = formatUserDepositAndBorrow(reservesData)
+
+  return healthFactorAnswer + '\n' + userDepositsAndBorrowings
+}
+
+const formatUserDepositAndBorrow = (reservesData: ComputedUserReserve[]) => {
+  // reservesData = reservesData.filter(
+  //   ({ underlyingBalance }) => parseInt(underlyingBalance) > 0
+  // )
+  let deposits: string[][] = []
+  let borrows: string[][] = []
+
+  for (const currReserve of reservesData) {
+    const {
+      reserve: { symbol },
+      underlyingBalance, // deposit
+      totalBorrows, // borrows
+    } = currReserve
+    deposits.push([symbol, underlyingBalance])
+    borrows.push([symbol, totalBorrows])
+  }
+  let result = 'Deposits:\n'
+  console.log(deposits)
+  for (const deposit of deposits) {
+    if (deposit[1] === '0') {
+      continue
+    }
+    result = result + `${deposit[0]}: ${deposit[1]}` + '\n'
+  }
+  result = result + 'Borrowings:\n'
+  for (const borrow of borrows) {
+    if (borrow[1] === '0') {
+      continue
+    }
+    result = result + `${borrow[0]}: ${borrow[1]}` + '\n'
+  }
+  return result
 }
 
 const formatHealthFactorAnwser = (healthFactor) => {

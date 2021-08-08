@@ -5,7 +5,7 @@ import { aaveMaticSubgraphEndpoint, aaveV2SubgraphEndpoint } from '../constants'
 
 import { formatJson } from '../utils/index'
 import { apyAprQuery, apyAprResolver } from './queryApyApr'
-import { getUserHealthFactor } from './queryHealthFactor'
+import { getUserHealthFactor } from './queryUserData'
 import { variableRatesQuery, variableRatesResolver } from './queryRates'
 import { userDepositQuery, userDespositResolver } from './queryUserDeposit'
 import { userReserveQuery, userReserveResolver } from './queryUserReserve'
@@ -52,7 +52,7 @@ const generalResolver = (data) => {
 
 // we can simply use this client to run quries.
 // executeQuery(aaveMaticClient, testQuery)
-export const getUserDeposit = async (userWalletAddress) =>
+export const getUserDeposit = async (userWalletAddress: string) =>
   executeQuery(
     aaveMaticClient,
     userDepositQuery(userWalletAddress),
@@ -61,7 +61,7 @@ export const getUserDeposit = async (userWalletAddress) =>
 
 // we can simply use this client to run quries.
 // executeQuery(aaveMaticClient, testQuery)
-export const getUserReserve = async (userWalletAddress) =>
+export const getUserReserve = async (userWalletAddress: string) =>
   executeQuery(
     aaveMaticClient,
     userReserveQuery(userWalletAddress),
@@ -75,8 +75,8 @@ export const getVariableRate = async () =>
     variableRatesResolver
   )
 
-export const getApyApr = async (symbol) =>
+export const getApyApr = async (symbol: string) =>
   executeQuery(aaveMaticClient, apyAprQuery(symbol), apyAprResolver)
 
-export const getHealthFactor = async (userWalletAddress) =>
+export const getHealthFactor = async (userWalletAddress: string) =>
   getUserHealthFactor(userWalletAddress, executeQuery, aaveMaticClient)
