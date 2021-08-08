@@ -15,8 +15,8 @@ const getShaunHealthFactorAndDeposit = (ctx) => __awaiter(void 0, void 0, void 0
     try {
         const userWalletAddress = '0xF4A838260E11551C29D9DeE4B0c71f17bf1385Cb'.toLowerCase();
         const result = yield queriesAndResolvers_1.getHealthFactor(userWalletAddress.toLowerCase());
-        const result2 = yield queriesAndResolvers_1.getUserReserve(userWalletAddress.toLowerCase());
-        return ctx.reply(`${result}\n${result2}`);
+        // const result2 = await getUserReserve(userWalletAddress.toLowerCase())
+        return ctx.reply(result);
     }
     catch (e) {
         console.log(e);
@@ -28,8 +28,8 @@ const getEugeneHealthFactorAndDeposit = (ctx) => __awaiter(void 0, void 0, void 
     try {
         const userWalletAddress = '0xdaAed1035319299174299D066b41A9a63d87E805'.toLowerCase();
         const result = yield queriesAndResolvers_1.getHealthFactor(userWalletAddress.toLowerCase());
-        const result2 = yield queriesAndResolvers_1.getUserReserve(userWalletAddress.toLowerCase());
-        return ctx.reply(`${result}\n${result2}`);
+        // const result2 = await getUserReserve(userWalletAddress.toLowerCase())
+        return ctx.reply(result);
     }
     catch (e) {
         console.log(e);

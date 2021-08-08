@@ -167,7 +167,7 @@ const formatUserDepositAndBorrow = (reservesData: ComputedUserReserve[]) => {
     borrows.push([symbol, totalBorrows])
   }
   let result = 'Deposits:\n'
-  console.log(deposits)
+  // console.log(deposits)
   for (const deposit of deposits) {
     if (deposit[1] === '0') {
       continue

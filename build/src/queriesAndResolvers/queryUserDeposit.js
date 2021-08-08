@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userDespositResolver = exports.userDepositQuery = void 0;
 const apollo_server_1 = require("apollo-server");
-const index_js_1 = require("../utils/index.js");
+const utils_1 = require("../utils");
 // userDeposit gql query
 const userDepositQuery = (USER_ADDRESS) => apollo_server_1.gql `
   query USER_DEPOSIT_QUERY {
@@ -29,10 +29,10 @@ const userDespositResolver = (data) => {
         const { userReserve: { currentATokenBalance }, reserve: { symbol, variableBorrowRate }, } = data;
         let formattedBalance = '0';
         if (symbol === 'USDC') {
-            formattedBalance = index_js_1.formatUSDC(currentATokenBalance);
+            formattedBalance = utils_1.formatUSDC(currentATokenBalance);
         }
         else {
-            formattedBalance = index_js_1.formatERC20(currentATokenBalance);
+            formattedBalance = utils_1.formatERC20(currentATokenBalance);
         }
         balances.set(symbol, formattedBalance);
     });

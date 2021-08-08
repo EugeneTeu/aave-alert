@@ -24,6 +24,7 @@ export interface RAW_USER_RESERVE_userReserves_reserve {
 
 export interface RAW_USER_RESERVE_userReserves {
   __typename: "UserReserve";
+  currentATokenBalance: any;
   scaledATokenBalance: any;
   usageAsCollateralEnabledOnUser: boolean;
   scaledVariableDebt: any;

@@ -5,7 +5,7 @@ import { aaveMaticSubgraphEndpoint, aaveV2SubgraphEndpoint } from '../constants'
 
 import { formatJson } from '../utils/index'
 import { apyAprQuery, apyAprResolver } from './queryApyApr'
-import { getUserHealthFactor } from './queryUserData'
+import { getUserHealthFactor } from './queryHealthFactor'
 import { variableRatesQuery, variableRatesResolver } from './queryRates'
 import { userDepositQuery, userDespositResolver } from './queryUserDeposit'
 import { userReserveQuery, userReserveResolver } from './queryUserReserve'

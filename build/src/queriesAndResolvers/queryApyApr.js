@@ -37,10 +37,9 @@ const apyAprQuery = (symbol) => apollo_server_1.gql `
 exports.apyAprQuery = apyAprQuery;
 const SECONDS_PER_YEAR = 365 * 86400;
 const apyAprResolver = (data) => {
-    console.log(JSON.stringify(data));
+    // console.log(JSON.stringify(data))
     const { reserves } = data;
     const { reserve } = data;
-    // TODO: fix null
     if (reserve == null) {
         return 'Symbol not supported by AAVE on polygon';
     }
@@ -81,7 +80,7 @@ const formatresult = ({ symbol, percentStableBorrowAPY, percentVariableBorrowAPY
     result.push(`Deposit APY: ${percentDepositAPY.toPrecision(3)}%`);
     result.push(`Desposit APR: ${percentDepositAPR.toPrecision(3)}%`);
     result.push(`total reward (APY + APR): ${(percentDepositAPR + percentDepositAPY).toPrecision(3)}%`);
-    console.log(result.join('\n'));
+    // console.log(result.join('\n'))
     return result.join('\n');
 };
 //TODO: calculate USDC APY APR

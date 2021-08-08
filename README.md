@@ -15,3 +15,9 @@ yarn run apollo schema:download --endpoint=https://api.thegraph.com/subgraphs/na
 ```bash
  yarn run apollo codegen:generate --localSchemaFile=graphql-schema.json --target=typescript --includes=src/**/*.ts --tagName=gql --addTypename --globalTypesFile=src/types/graphql-global-types.ts types  
 ```
+
+### Run on compute engine instance 
+
+```bash
+nohup yarn run start > /dev/null 2>&1 &
+```
