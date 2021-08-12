@@ -14,6 +14,7 @@ import {
   UserSummaryData,
   ComputedUserReserve,
 } from '@aave/protocol-js/dist/v2'
+import { formatEther } from 'ethers/lib/utils'
 const POOL = '0xb53c1a33016b2dc2ff3653530bff1848a515c8c5'.toLowerCase()
 
 // GraphQL queries
@@ -128,23 +129,32 @@ const getUserHealthFactor = async (
       (data) => data
     )
 
-  const usdPriceInETH = await executeQuery(
-    aaveMaticClient,
-    usdPriceInETHGQL,
-    (data) => data
-  )
+  const {
+    priceOracle: { usdPriceEth },
+  } = await executeQuery(aaveMaticClient, usdPriceInETHGQL, (data) => data)
 
-  const { healthFactor, reservesData }: UserSummaryData = formatUserSummaryData(
+  const {
+    healthFactor,
+    reservesData,
+    totalCollateralUSD,
+    totalBorrowsETH,
+    totalCollateralETH,
+    totalBorrowsUSD,
+    currentLoanToValue,
+  }: UserSummaryData = formatUserSummaryData(
     reserves,
     userReserves,
     userId,
-    usdPriceInETH,
+    usdPriceEth,
     currentTimeStamp()
   )
 
+  // console.log(totalCollateralUSD, totalBorrowsUSD)
+  // console.log(usdPriceInETH)
   const healthFactorAnswer = formatHealthFactorAnwser(
     parseFloat(healthFactor).toPrecision(3)
   )
+  // console.log(healthFactor)
   const userDepositsAndBorrowings = formatUserDepositAndBorrow(reservesData)
 
   return healthFactorAnswer + '\n' + userDepositsAndBorrowings
