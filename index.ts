@@ -20,9 +20,6 @@ const { config } = pkg
 config()
 const API_TOKEN = process.env.BOT_TOKEN || ''
 const type = process.env.env ?? 'dev'
-const hostname = process.env.HOSTNAME || '127.0.0.1'
-const port = 3000
-const address = process.env.ADDRESS ?? ''
 
 const chatIDsToAddress = new Map()
 const addressToChatIDs = new Map()
