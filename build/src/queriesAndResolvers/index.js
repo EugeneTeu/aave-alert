@@ -14,5 +14,5 @@ __exportStar(require("./queryUserDeposit"), exports);
 __exportStar(require("./queryUserReserve"), exports);
 __exportStar(require("./queryApyApr"), exports);
 __exportStar(require("./queryRates"), exports);
-__exportStar(require("./queryUserData"), exports);
+__exportStar(require("./queryHealthFactor"), exports);
 __exportStar(require("./queries"), exports);

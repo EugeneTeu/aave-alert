@@ -7,6 +7,7 @@
   "scripts": {
     "start": "tsc --project ./ && node build/index.js",
     "build": "tsc --project ./",
+    "dev": "nodemon",
     "deploy": "node build/index.js"
   },
   "dependencies": {
@@ -27,6 +28,7 @@
   "devDependencies": {
     "@types/graphql": "^14.5.0",
     "apollo": "^2.33.4",
+    "nodemon": "^2.0.12",
     "prettier": "2.3.1"
   }
 }

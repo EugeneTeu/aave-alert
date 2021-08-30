@@ -15,7 +15,7 @@ const graphql_request_1 = require("graphql-request");
 const constants_1 = require("../constants");
 const index_1 = require("../utils/index");
 const queryApyApr_1 = require("./queryApyApr");
-const queryUserData_1 = require("./queryUserData");
+const queryHealthFactor_1 = require("./queryHealthFactor");
 const queryRates_1 = require("./queryRates");
 const queryUserDeposit_1 = require("./queryUserDeposit");
 const queryUserReserve_1 = require("./queryUserReserve");
@@ -75,5 +75,5 @@ const getVariableRate = () => __awaiter(void 0, void 0, void 0, function* () {
 exports.getVariableRate = getVariableRate;
 const getApyApr = (symbol) => __awaiter(void 0, void 0, void 0, function* () { return executeQuery(aaveMaticClient, queryApyApr_1.apyAprQuery(symbol), queryApyApr_1.apyAprResolver); });
 exports.getApyApr = getApyApr;
-const getHealthFactor = (userWalletAddress) => __awaiter(void 0, void 0, void 0, function* () { return queryUserData_1.getUserHealthFactor(userWalletAddress, executeQuery, aaveMaticClient); });
+const getHealthFactor = (userWalletAddress) => __awaiter(void 0, void 0, void 0, function* () { return queryHealthFactor_1.getUserHealthFactor(userWalletAddress, executeQuery, aaveMaticClient); });
 exports.getHealthFactor = getHealthFactor;
