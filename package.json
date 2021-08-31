@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@aave/protocol-js": "^2.7.2",
+    "@maticnetwork/dagger": "^0.2.0",
     "apollo-link-error": "^1.1.13",
     "apollo-link-http": "^1.5.17",
     "apollo-server": "^2.25.1",

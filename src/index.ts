@@ -1,4 +1,6 @@
 export * from './commands'
 export * from './queriesAndResolvers'
 export * from './utils'
-export * from './provider'
+export * from './websocketProvider'
+export * from './bot'
+export * from './rpcProvider'
