@@ -13,3 +13,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./commands"), exports);
 __exportStar(require("./queriesAndResolvers"), exports);
 __exportStar(require("./utils"), exports);
+__exportStar(require("./provider"), exports);

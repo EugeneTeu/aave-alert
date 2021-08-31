@@ -11,8 +11,6 @@ import {
   addPendingTxnListener,
 } from './src/index'
 import { ethers, Event, utils } from 'ethers'
-import { superWizard } from './register-scene'
-import { Stage } from 'telegraf/typings/scenes'
 // get Dot env
 const { config } = pkg
 config()

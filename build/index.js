@@ -11,83 +11,105 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
+const telegraf_1 = require("telegraf");
 const dotenv_1 = __importDefault(require("dotenv"));
+const index_1 = require("./src/index");
 const ethers_1 = require("ethers");
+// get Dot env
 const { config } = dotenv_1.default;
-const provider = new ethers_1.ethers.providers.JsonRpcProvider('https://rpc-mumbai.maticvigil.com/');
-function main() {
-    var _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        const blockNumber = yield provider.getBlockNumber();
-        console.log(blockNumber);
-        const address = (_a = process.env.ADDRESS) !== null && _a !== void 0 ? _a : '';
-        const accBalance = yield provider.getBalance(address);
-        console.log(accBalance);
-    });
+config();
+const API_TOKEN = process.env.BOT_TOKEN || '';
+const type = (_a = process.env.env) !== null && _a !== void 0 ? _a : 'dev';
+const chatIDsToAddress = new Map();
+const addressToChatIDs = new Map();
+const listenerIDs = new Map();
+function init(type) {
+    // set u ethers provider
+    let provider;
+    let webSocketProvider;
+    if (type === 'dev') {
+        provider = new ethers_1.ethers.providers.JsonRpcProvider(index_1.testnetRPC);
+        webSocketProvider = new ethers_1.ethers.providers.WebSocketProvider(index_1.testnetWSS);
+    }
+    else {
+        provider = new ethers_1.ethers.providers.JsonRpcProvider(index_1.mainnetRPC);
+        webSocketProvider = new ethers_1.ethers.providers.WebSocketProvider(index_1.mainnetWSS);
+    }
+    return {
+        provider,
+        webSocketProvider,
+    };
 }
-main();
-//
-// console.log('Init conifig...')
-// config()
-// const API_TOKEN = process.env.BOT_TOKEN || ''
-// const PORT = process.env.PORT || 3000
-// const URL = process.env.URL
-// console.log('Creating bot with token')
-// const bot = new Telegraf(API_TOKEN)
-// console.log('bot created!')
-// // bot.telegram.setWebhook(`${URL}/bot${API_TOKEN}`)
-// bot.start((ctx) => ctx.reply('Hello there.'))
-// bot.command('quit', (ctx) => {
-//   // Using context shortcut
-//   ctx.leaveChat()
-// })
-// bot.command('alive', (ctx) => {
-//   ctx.reply('hi i am alive')
-// })
-// //TODO: fix query
-// bot.command('shaun', getShaunHealthFactorAndDeposit)
-// bot.command('Shaun', getShaunHealthFactorAndDeposit)
-// bot.command('eugene', getEugeneHealthFactorAndDeposit)
-// bot.command('Eugene', getEugeneHealthFactorAndDeposit)
-// bot.command('r', async (ctx) => {
-//   const {
-//     update: {
-//       message: { text },
-//     },
-//   } = ctx
-//   if (!text || text.split(' ').length < 2 || text.split(' ').length > 3) {
-//     return ctx.reply('wrong format, should be /r <symbol>')
-//   }
-//   const symbol = text.split(' ')[1]
-//   return await getAPYAPR(ctx, symbol)
-// })
-// bot.command('dp', async (ctx) => {
-//   const {
-//     update: {
-//       message: { text },
-//     },
-//   } = ctx
-//   if (!text || text.split(' ').length < 2 || text.split(' ').length > 3) {
-//     return ctx.reply('wrong format, should be /dp <ETH ADDRESS>')
-//   }
-//   let address = text.split(' ')[1]
-//   try {
-//     address = utils.getAddress(address)
-//   } catch (e) {
-//     // {"reason":"invalid address","code":"INVALID_ARGUMENT","argument":"address","value":"test"}
-//     const { reason, value } = e
-//     return ctx.reply(`Received: ${value}\n rejected as ${reason}`)
-//   }
-//   const result = await getHealthFactor(address.toLowerCase())
-//   const result2 = await getUserReserve(address.toLowerCase())
-//   return ctx.reply(`${result}\n${result2}`)
-// })
-// bot.command('oldschool', (ctx) => ctx.reply('Hello'))
-// bot.command('hipster', Telegraf.reply('λ'))
-// bot.startWebhook(`/bot${API_TOKEN}`, null, PORT)
-// console.log('bot launching!')
-// bot.launch()
-// // Enable graceful stop
-// process.once('SIGINT', () => bot.stop('SIGINT'))
-// process.once('SIGTERM', () => bot.stop('SIGTERM'))
+console.log('Init providers to chain');
+const { webSocketProvider } = init(type);
+console.log('Creating bot with token');
+const bot = new telegraf_1.Telegraf(API_TOKEN);
+console.log('bot created!');
+bot.launch();
+bot.start((ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!ctx) {
+        return;
+    }
+    const currentChatId = ctx.chat.id;
+    const address = chatIDsToAddress.get(currentChatId);
+    if (!address) {
+        ctx.reply('Type /reg {YOUR_ADDRESS} to register');
+    }
+    else {
+        const listenerID = index_1.addPendingTxnListener(webSocketProvider, address, bot, ctx.chat.id);
+        chatIDsToAddress.set(ctx.chat.id, address);
+        addressToChatIDs.set(address, ctx.chat.id);
+        listenerIDs.set(address, listenerID);
+        console.log(listenerIDs);
+        console.log(addressToChatIDs);
+        return ctx.reply(`Started monitoring for this address ${address}!`);
+    }
+}));
+bot.command('reg', (ctx) => {
+    const { update: { message: { text }, }, } = ctx;
+    if (!text || text.split(' ').length < 2 || text.split(' ').length > 3) {
+        return ctx.reply('wrong format, should be /reg <ADDRESS>');
+    }
+    let address = text.split(' ')[1];
+    const currentAddressInChat = chatIDsToAddress.get(ctx.chat.id);
+    if (currentAddressInChat == address) {
+        return ctx.reply('Address already registered!');
+    }
+    try {
+        address = ethers_1.utils.getAddress(address);
+    }
+    catch (e) {
+        const { reason, value } = e;
+        return ctx.reply(`Received: ${value}\n rejected as ${reason}`);
+    }
+    chatIDsToAddress.set(ctx.chat.id, address);
+    return ctx.reply('Address registered! /start to start monitoring');
+});
+bot.command('stop', (ctx) => {
+    const currentAddress = chatIDsToAddress.get(ctx.chat.id);
+    console.log(currentAddress);
+    const unsubscribe = listenerIDs.get(currentAddress);
+    console.log(unsubscribe);
+    if (unsubscribe) {
+        unsubscribe();
+    }
+    listenerIDs.delete(currentAddress);
+    addressToChatIDs.delete(addressToChatIDs.get(ctx.chat.id));
+    chatIDsToAddress.delete(ctx.chat.id);
+    return ctx.reply('Your chat ID has been removed!');
+});
+bot.command('/listeners', (ctx) => {
+    const listeners = webSocketProvider.listeners('pending');
+    if (listeners.length === 0) {
+        return ctx.reply('no listeners right now!');
+    }
+    return ctx.reply(`${listeners}`);
+});
+bot.command('eugene', index_1.getEugeneHealthFactorAndDeposit);
+console.log('bot launching!');
+bot.launch();
+// Enable graceful stop
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));
