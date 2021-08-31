@@ -8,16 +8,16 @@ export function addPendingTxnListener(
   bot: Telegraf<Context<Update>>,
   chatId: number
 ) {
-  const listener = async (txHash: string) => {
+  const listener = async ({ hash }) => {
     try {
       const txn: ethers.providers.TransactionResponse =
-        await webSocketProvider.getTransaction(txHash)
+        await webSocketProvider.getTransaction(hash)
       if (!txn) {
-        return
-      }
-      if (txn.from === address || txn.to === address) {
-        const reply = formatReply(txn)
-        bot.telegram.sendMessage(chatId, reply)
+      } else {
+        if (txn.from === address || txn.to === address) {
+          const reply = formatReply(txn)
+          bot.telegram.sendMessage(chatId, reply)
+        }
       }
     } catch (e) {
       console.log(e)

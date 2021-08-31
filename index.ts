@@ -11,6 +11,7 @@ import {
   addPendingTxnListener,
 } from './src/index'
 import { ethers, Event, utils } from 'ethers'
+import provider from 'eth-provider'
 // get Dot env
 const { config } = pkg
 config()
@@ -23,30 +24,37 @@ const listenerIDs = new Map<string, () => ethers.providers.Provider>()
 
 function init(type: string) {
   // set u ethers provider
-  let provider: ethers.providers.JsonRpcProvider
+  let rpcProvider: ethers.providers.JsonRpcProvider
   let webSocketProvider: ethers.providers.Provider | ethers.Signer | undefined
 
   if (type === 'dev') {
-    provider = new ethers.providers.JsonRpcProvider(testnetRPC)
-    webSocketProvider = new ethers.providers.WebSocketProvider(testnetWSS)
+    rpcProvider = new ethers.providers.JsonRpcProvider(testnetRPC)
+    webSocketProvider = new ethers.providers.Web3Provider(provider(testnetWSS))
+    // works
   } else {
-    provider = new ethers.providers.JsonRpcProvider(mainnetRPC)
-    webSocketProvider = new ethers.providers.WebSocketProvider(mainnetWSS)
+    rpcProvider = new ethers.providers.JsonRpcProvider(mainnetRPC)
+    webSocketProvider = new ethers.providers.Web3Provider(provider(mainnetWSS))
   }
 
   return {
-    provider,
+    rpcProvider,
     webSocketProvider,
   }
 }
 
 console.log('Init providers to chain')
 const { webSocketProvider } = init(type)
+
+setInterval(() => {
+  webSocketProvider.getNetwork()
+  console.log('heart beat log')
+}, 5000)
+
 console.log('Creating bot with token')
 const bot = new Telegraf(API_TOKEN)
 console.log('bot created!')
 bot.launch()
-bot.start(async (ctx) => {
+bot.command('/start', async (ctx) => {
   if (!ctx) {
     return
   }
@@ -117,9 +125,14 @@ bot.command('/listeners', (ctx) => {
   return ctx.reply(`${listeners}`)
 })
 
+bot.command('/test', async (ctx) => {
+  const network = await webSocketProvider.getNetwork()
+  console.log(network)
+  return ctx.reply(`${network.name} ${network.chainId}`)
+})
+
 bot.command('eugene', getEugeneHealthFactorAndDeposit)
-console.log('bot launching!')
-bot.launch()
+
 // Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
