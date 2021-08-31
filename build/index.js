@@ -17,6 +17,7 @@ const telegraf_1 = require("telegraf");
 const dotenv_1 = __importDefault(require("dotenv"));
 const index_1 = require("./src/index");
 const ethers_1 = require("ethers");
+const eth_provider_1 = __importDefault(require("eth-provider"));
 // get Dot env
 const { config } = dotenv_1.default;
 config();
@@ -27,28 +28,33 @@ const addressToChatIDs = new Map();
 const listenerIDs = new Map();
 function init(type) {
     // set u ethers provider
-    let provider;
+    let rpcProvider;
     let webSocketProvider;
     if (type === 'dev') {
-        provider = new ethers_1.ethers.providers.JsonRpcProvider(index_1.testnetRPC);
-        webSocketProvider = new ethers_1.ethers.providers.WebSocketProvider(index_1.testnetWSS);
+        rpcProvider = new ethers_1.ethers.providers.JsonRpcProvider(index_1.testnetRPC);
+        webSocketProvider = new ethers_1.ethers.providers.Web3Provider(eth_provider_1.default(index_1.testnetWSS));
+        // works
     }
     else {
-        provider = new ethers_1.ethers.providers.JsonRpcProvider(index_1.mainnetRPC);
-        webSocketProvider = new ethers_1.ethers.providers.WebSocketProvider(index_1.mainnetWSS);
+        rpcProvider = new ethers_1.ethers.providers.JsonRpcProvider(index_1.mainnetRPC);
+        webSocketProvider = new ethers_1.ethers.providers.Web3Provider(eth_provider_1.default(index_1.mainnetWSS));
     }
     return {
-        provider,
+        rpcProvider,
         webSocketProvider,
     };
 }
 console.log('Init providers to chain');
 const { webSocketProvider } = init(type);
+setInterval(() => {
+    webSocketProvider.getNetwork();
+    console.log('heart beat log');
+}, 5000);
 console.log('Creating bot with token');
 const bot = new telegraf_1.Telegraf(API_TOKEN);
 console.log('bot created!');
 bot.launch();
-bot.start((ctx) => __awaiter(void 0, void 0, void 0, function* () {
+bot.command('/start', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     if (!ctx) {
         return;
     }
@@ -107,9 +113,12 @@ bot.command('/listeners', (ctx) => {
     }
     return ctx.reply(`${listeners}`);
 });
+bot.command('/test', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    const network = yield webSocketProvider.getNetwork();
+    console.log(network);
+    return ctx.reply(`${network.name} ${network.chainId}`);
+}));
 bot.command('eugene', index_1.getEugeneHealthFactorAndDeposit);
-console.log('bot launching!');
-bot.launch();
 // Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));

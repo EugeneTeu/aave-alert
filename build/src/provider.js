@@ -12,15 +12,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.addPendingTxnListener = void 0;
 const explorer_1 = require("./explorer");
 function addPendingTxnListener(webSocketProvider, address, bot, chatId) {
-    const listener = (txHash) => __awaiter(this, void 0, void 0, function* () {
+    const listener = ({ hash }) => __awaiter(this, void 0, void 0, function* () {
         try {
-            const txn = yield webSocketProvider.getTransaction(txHash);
+            const txn = yield webSocketProvider.getTransaction(hash);
             if (!txn) {
-                return;
             }
-            if (txn.from === address || txn.to === address) {
-                const reply = formatReply(txn);
-                bot.telegram.sendMessage(chatId, reply);
+            else {
+                if (txn.from === address || txn.to === address) {
+                    const reply = formatReply(txn);
+                    bot.telegram.sendMessage(chatId, reply);
+                }
             }
         }
         catch (e) {
