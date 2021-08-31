@@ -8,10 +8,10 @@ export function addPendingTxnListener(
   bot: Telegraf<Context<Update>>,
   chatId: number
 ) {
-  webSocketProvider.on('pending', async (tx) => {
+  const listener = async (txHash: string) => {
     try {
       const txn: ethers.providers.TransactionResponse =
-        await webSocketProvider.getTransaction(tx)
+        await webSocketProvider.getTransaction(txHash)
       if (!txn) {
         return
       }
@@ -23,8 +23,10 @@ export function addPendingTxnListener(
       console.log(e)
       return
     }
-  })
-  return () => webSocketProvider.off('pending')
+  }
+
+  webSocketProvider.on('pending', listener)
+  return () => webSocketProvider.off('pending', listener)
 }
 
 function formatReply(txn: ethers.providers.TransactionResponse) {
@@ -32,5 +34,3 @@ function formatReply(txn: ethers.providers.TransactionResponse) {
     txn.nonce
   }, explorer: ${getExplorerURl(txn.hash)}`
 }
-
-export function removePendingTxnListener(address) {}

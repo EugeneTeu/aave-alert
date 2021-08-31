@@ -3,9 +3,7 @@ import { Network } from '@aave/protocol-js'
 import pkg from 'dotenv'
 import http from 'http'
 import {
-  getShaunHealthFactorAndDeposit,
   getEugeneHealthFactorAndDeposit,
-  getAPYAPR,
   testnetRPC,
   testnetWSS,
   mainnetRPC,
@@ -49,12 +47,6 @@ const { webSocketProvider } = init(type)
 console.log('Creating bot with token')
 const bot = new Telegraf(API_TOKEN)
 console.log('bot created!')
-
-// const stage = new Scenes.Stage<Scenes.WizardContext>([superWizard], {
-//   default: 'super-wizard',
-// })
-// bot.use(session())
-// bot.use(stage.middleware())
 bot.launch()
 bot.start(async (ctx) => {
   if (!ctx) {
@@ -71,8 +63,12 @@ bot.start(async (ctx) => {
       bot,
       ctx.chat.id
     )
+    chatIDsToAddress.set(ctx.chat.id, address)
+    addressToChatIDs.set(address, ctx.chat.id)
     listenerIDs.set(address, listenerID)
-    ctx.reply(`Started monitoring for this address ${address}!`)
+    console.log(listenerIDs)
+    console.log(addressToChatIDs)
+    return ctx.reply(`Started monitoring for this address ${address}!`)
   }
 })
 
@@ -86,28 +82,41 @@ bot.command('reg', (ctx) => {
     return ctx.reply('wrong format, should be /reg <ADDRESS>')
   }
   let address = text.split(' ')[1]
+  const currentAddressInChat = chatIDsToAddress.get(ctx.chat.id)
+  if (currentAddressInChat == address) {
+    return ctx.reply('Address already registered!')
+  }
   try {
     address = utils.getAddress(address)
   } catch (e) {
     const { reason, value } = e
     return ctx.reply(`Received: ${value}\n rejected as ${reason}`)
   }
+
   chatIDsToAddress.set(ctx.chat.id, address)
   return ctx.reply('Address registered! /start to start monitoring')
 })
 
 bot.command('stop', (ctx) => {
-  const currentAddress = addressToChatIDs.get(ctx.chat.id)
-
+  const currentAddress = chatIDsToAddress.get(ctx.chat.id)
+  console.log(currentAddress)
   const unsubscribe = listenerIDs.get(currentAddress)
+  console.log(unsubscribe)
   if (unsubscribe) {
     unsubscribe()
   }
-
   listenerIDs.delete(currentAddress)
   addressToChatIDs.delete(addressToChatIDs.get(ctx.chat.id))
   chatIDsToAddress.delete(ctx.chat.id)
-  ctx.reply('Your chat ID has been removed!')
+  return ctx.reply('Your chat ID has been removed!')
+})
+
+bot.command('/listeners', (ctx) => {
+  const listeners = webSocketProvider.listeners('pending')
+  if (listeners.length === 0) {
+    return ctx.reply('no listeners right now!')
+  }
+  return ctx.reply(`${listeners}`)
 })
 
 bot.command('eugene', getEugeneHealthFactorAndDeposit)
