@@ -46,7 +46,7 @@ function init(type) {
 }
 console.log('Init providers to chain');
 const { webSocketProvider } = init(type);
-setInterval(() => {
+const refreshIntervalId = setInterval(() => {
     webSocketProvider.getNetwork();
     console.log('heart beat log');
 }, 5000);
@@ -120,5 +120,11 @@ bot.command('/test', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
 }));
 bot.command('eugene', index_1.getEugeneHealthFactorAndDeposit);
 // Enable graceful stop
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
+process.once('SIGINT', () => {
+    clearInterval(refreshIntervalId);
+    bot.stop('SIGINT');
+});
+process.once('SIGTERM', () => {
+    clearInterval(refreshIntervalId);
+    bot.stop('SIGTERM');
+});
