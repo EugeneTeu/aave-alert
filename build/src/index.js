@@ -13,4 +13,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./commands"), exports);
 __exportStar(require("./queriesAndResolvers"), exports);
 __exportStar(require("./utils"), exports);
-__exportStar(require("./provider"), exports);
+__exportStar(require("./websocketProvider"), exports);
+__exportStar(require("./bot"), exports);
+__exportStar(require("./rpcProvider"), exports);

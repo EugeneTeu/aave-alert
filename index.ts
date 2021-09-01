@@ -34,7 +34,7 @@ let id
 async function main() {
   console.log('Init providers to chain')
   const { rpcProvider, webSocketProvider } = init(type)
-  id = webSocketProvider.initHeartBeat()
+  // id = webSocketProvider.initHeartBeat()
   initBot(webSocketProvider)
   //webSocketProvider.listenToPending();
 }
