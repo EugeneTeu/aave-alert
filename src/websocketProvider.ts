@@ -69,8 +69,7 @@ export class WebSocketProvider {
           }
         }
       } catch (e) {
-        console.log(e)
-        return
+        bot.telegram.sendMessage(chatId, `Chat ID: ${chatId} \n${e}`)
       }
     }
 
