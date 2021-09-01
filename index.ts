@@ -36,6 +36,7 @@ async function main() {
   const { rpcProvider, webSocketProvider } = init(type)
   id = webSocketProvider.initHeartBeat()
   initBot(webSocketProvider)
+  //webSocketProvider.listenToPending();
 }
 main()
 

@@ -89,6 +89,9 @@ export function initBot(webSocketProvider: WebSocketProvider) {
   bot.command('/test', async (ctx) => {
     const network = await webSocketProvider.webSocketProvider.getNetwork()
     console.log(network)
+    console.log(addressToChatIDs)
+    console.log(chatIDsToAddress)
+    console.log(listenerIDs)
     return ctx.reply(`${network.name} ${network.chainId}`)
   })
 

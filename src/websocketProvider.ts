@@ -64,7 +64,7 @@ export class WebSocketProvider {
           } else {
             if (txn.from === address || txn.to === address) {
               const reply = formatReply(txn)
-              bot.telegram.sendMessage(chatId, reply)
+              bot.telegram.sendMessage(chatId, `Chat ID: ${chatId} \n${reply}`)
             }
           }
         }
